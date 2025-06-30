@@ -11,6 +11,23 @@ def crear_proyecto(db: Session, proyecto: schemas.ProyectoCreate):
 def listar_proyectos(db: Session):
     return db.query(models.Proyecto).all()
 
+def actualizar_proyecto(db: Session, proyecto_id: int, datos: schemas.ProyectoCreate):
+    proyecto = db.query(models.Proyecto).filter(models.Proyecto.id == proyecto_id).first()
+    if not proyecto:
+        return None
+    for key, value in datos.dict().items():
+        setattr(proyecto, key, value)
+    db.commit()
+    db.refresh(proyecto)
+    return proyecto
+
+def eliminar_proyecto(db: Session, proyecto_id: int):
+    proyecto = db.query(models.Proyecto).filter(models.Proyecto.id == proyecto_id).first()
+    if not proyecto:
+        return False
+    db.delete(proyecto)
+    db.commit()
+    return True
 
 
 
